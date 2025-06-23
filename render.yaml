@@ -1,0 +1,10 @@
+services:
+  - type: web
+    name: ai-pdf-bot
+    env: python
+    plan: free
+    buildCommand: ""
+    startCommand: "python bot.py"
+    envVars:
+      - key: 7587562761:AAEaM1746z0ZknDG3Gn2D6MgsbrL_7tn0o4
+        sync: false
