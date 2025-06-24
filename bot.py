@@ -1,25 +1,22 @@
-from aiogram import Bot, Dispatcher, types 
-from aiogram.types import FSInputFile
-from aiogram.fsm.storage.memory import MemoryStorage
-import asyncio
+from aiogram import Bot, Dispatcher, types
+from aiogram.utils import executor
+import logging
 import os
 
-BOT_TOKEN = os.getenv("7587562761:AAEaM1746z0ZknDG3Gn2D6MgsbrL_7tn0o4")
+API_TOKEN = os.getenv("7587562761:AAEaM1746z0ZknDG3Gn2D6MgsbrL_7tn0o4")
 
-bot = Bot(token=BOT_TOKEN, parse_mode="HTML")
-dp = Dispatcher(storage=MemoryStorage())
+logging.basicConfig(level=logging.INFO)
+bot = Bot(token=API_TOKEN)
+dp = Dispatcher(bot)
 
-@dp.message(commands=["start"])
-async def start(message: types.Message):
-    await message.answer("Привет! Чтобы получить PDF-гайд, отправь команду /получить")
+@dp.message_handler(commands=["start"])
+async def send_welcome(message: types.Message):
+    await message.answer("Привет! Напиши /получить чтобы получить PDF-гайд")
 
-@dp.message(commands=["получить"])
+@dp.message_handler(commands=["получить"])
 async def send_pdf(message: types.Message):
-    file = FSInputFile("guide.pdf")
-    await message.answer_document(file, caption="Вот твой гайд 📄")
-
-async def main():
-    await dp.start_polling(bot)
+    with open("guide.pdf", "rb") as doc:
+        await message.answer_document(doc, caption="Вот твой гайд")
 
 if __name__ == "__main__":
-    asyncio.run(main())
+    executor.start_polling(dp)
